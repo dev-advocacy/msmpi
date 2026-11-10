@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(SrcRoot)\mpi.props" />
+  <PropertyGroup Label="Globals">
+    <TargetName>msmpiLaunchSvc</TargetName>
+    <ProjectGuid>{03cfde58-e72e-41d7-85ed-43150db0ca44}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyDescription>Microsoft MPI Launch Service</AssemblyDescription>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>
+        %(AdditionalIncludeDirectories);
+        $(SrcRoot)\mpi\msmpi\include;
+        $(SrcRoot)\mpi\common;
+        .\$(O);
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EntryPointSymbol>wmainCRTStartup</EntryPointSymbol>
+      <AdditionalDependencies>
+        %(AdditionalDependencies);
+        $(PUBLIC_SDK_LIB)\kernel32.lib;
+        $(PUBLIC_SDK_LIB)\crypt32.lib;
+        $(PUBLIC_SDK_LIB)\advapi32.lib;
+        $(PUBLIC_SDK_LIB)\userenv.lib;
+        $(CRT_Libs);
+      </AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="msmpiLaunchSvcMc.vcxproj" />
+    <ProjectReference Include="$(MPI_SRC_ROOT)\stub\mpistub.vcxproj" />
+    <ProjectReference Include="$(MPI_SRC_ROOT)\common\mpicommon.vcxproj" />
+    <Link Include="$(StagingOutputRootPath)\mpicommon\mpicommon.lib" />
+    <Link Include="$(StagingOutputRootPath)\mpistub\mpistub.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include=".\msmpilaunchsvc.cpp" />
+    <ClCompile Include=".\launchsvcmain.cpp" />
+    <ResourceCompile Include="launchsvc.rc" />
+  </ItemGroup>
+  <PropertyGroup>
+    <StagingOutputPath>$(MPI_BIN_DESTINATION)</StagingOutputPath>
+    <OutFileType>*.exe</OutFileType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8E3235C8-9024-4915-BFA6-8F79FFAEC14A}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(SrcRoot)\mpi.props" />
+  <PropertyGroup>
+    <AssemblyDescription>Microsoft MPI Launch Service</AssemblyDescription>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>None</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemGroup>
+    <CustomBuild Include="launchsvcmsg.mc">
+      <Message>Generating launchsvcmsg.h and launchsvcmsg.rc from launchsvcmsg.mc</Message>
+      <Command>if not exist "$(SrcRoot)\launchsvc\$(O)" mkdir "$(SrcRoot)\launchsvc\$(O)"
+"$(WindowsSdkDir)bin\$(WindowsTargetPlatformVersion)\$(PreferredToolArchitecture)\mc.exe" -h "$(SrcRoot)\launchsvc\$(O)" -r "$(SrcRoot)\launchsvc\$(O)" "%(FullPath)"</Command>
+      <Outputs>$(SrcRoot)\launchsvc\$(O)\launchsvcmsg.h;$(SrcRoot)\launchsvc\$(O)\launchsvcmsg.rc;$(SrcRoot)\launchsvc\$(O)\MSG00409.bin</Outputs>
+      <AdditionalInputs>$(MSBuildProjectFullPath);%(AdditionalInputs)</AdditionalInputs>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

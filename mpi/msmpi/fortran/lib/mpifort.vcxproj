@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(SrcRoot)\mpi.props" />
+  <PropertyGroup Label="Globals">
+    <TargetName>mpifort</TargetName>
+    <ProjectGuid>{a4085965-a1a1-4f4b-a5fd-f3b8da759e82}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Target Name="CompileFortran" AfterTargets="ClCompile" Inputs="@(ForCompile);$(MSBuildProjectFullPath);$(ProjectDir)Set-FortranCoffDirectives.pl" Outputs="@(ForCompile->'$(O)%(FileName).obj')">
+    <PropertyGroup Condition="'$(BuildArchitecture)'=='i386'">
+      <!-- setbotf.f installs no SEH handlers; mark its GNU object SafeSEH-compatible. -->
+      <Fort_Flags>-fno-underscoring -D_X86_=1 -Di386=1 -march=x86-64 -m32 -Wa,--defsym,@feat.00=1</Fort_Flags>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(BuildArchitecture)'=='amd64'">
+      <Fort_Flags>-fno-underscoring -D_WIN64 -D_AMD64_ -DAMD64</Fort_Flags>
+    </PropertyGroup>
+    <MakeDir Directories="$(O)" />
+    <Exec Command="&quot;$(GFORTRAN_BIN)\gfortran.exe&quot; -I&quot;$(MPI_INC_ROOT)&quot; -c &quot;%(ForCompile.Identity)&quot; $(Fort_Flags) -o &quot;$(O)\%(ForCompile.FileName).obj&quot;" />
+    <Exec Command="perl.exe &quot;$(ProjectDir)Set-FortranCoffDirectives.pl&quot; &quot;$(O)\%(ForCompile.FileName).obj&quot;" />
+    <ItemGroup>
+      <Lib Condition="'$(ConfigurationType)'=='StaticLibrary'" Include="@(ForCompile->'$(O)\%(Filename).obj')" />
+    </ItemGroup>
+  </Target>
+  <PropertyGroup Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        %(AdditionalIncludeDirectories);
+        $(MPI_SRC_ROOT)\msmpi\include;
+        $(MPI_SRC_ROOT)\msmpi\dbg
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        %(PreprocessorDefinitions);
+        USE_FORT_CDECL=1
+      </PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mpif.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <ForCompile Include="..\setbotf.f" />
+  </ItemGroup>
+</Project>

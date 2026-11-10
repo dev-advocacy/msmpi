@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A697D69E-7F67-457F-9194-267C73C5B8CF}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(SrcRoot)\mpi.props" />
+  <PropertyGroup Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>None</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <IntDirSharingDetected>None</IntDirSharingDetected>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemGroup>
+    <CustomBuild Include="$(MPI_SRC_ROOT)\common\mpitrace.man">
+      <Message>Generating MpiTraceEvents.h from mpitrace.man</Message>
+      <Command>if not exist "$(MPI_SRC_ROOT)\common\$(O)" mkdir "$(MPI_SRC_ROOT)\common\$(O)"
+&quot;$(WindowsSdkDir)bin\$(WindowsTargetPlatformVersion)\$(PreferredToolArchitecture)\mc.exe&quot; -um -p Trace -P EVENT_ -z MpiTraceEvents -h &quot;$(MPI_SRC_ROOT)\common\$(O)&quot; -r &quot;$(MPI_SRC_ROOT)\common\$(O)&quot; &quot;%(FullPath)&quot;</Command>
+      <Outputs>$(MPI_SRC_ROOT)\common\$(O)\MpiTraceEvents.h;$(MPI_SRC_ROOT)\common\$(O)\MpiTraceEvents.rc</Outputs>
+      <AdditionalInputs>$(MSBuildProjectFullPath);%(AdditionalInputs)</AdditionalInputs>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
